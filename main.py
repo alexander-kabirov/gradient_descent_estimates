@@ -1,4 +1,4 @@
-from torch import tensor, rand, randn, randint, sum, empty, cat, max, arange, long, mm, optim, linalg
+from torch import tensor, rand, randn, randint, sum, empty, cat, max, arange, long, mm, optim, linalg, exp
 from torch.nn import Module, parameter, functional, MSELoss
 
 
@@ -11,7 +11,7 @@ class Estimate(Module):
         self.variables = parameter.Parameter(randn([n_variables, 1]), requires_grad=True)  # normally dist
 
     def forward(self, x) -> tensor:
-        return sum(mm(x, self.variables)).reshape([1])
+        return sum(mm(x, exp(self.variables))).reshape([1])
 
 
 def generate_training_data(sample_num: int, variable_num: int, sample_sum: int,
@@ -61,5 +61,5 @@ if __name__ == '__main__':
             optimizer.step()
         print(loss.item())
 
-    print('Actual Variables:', variables, 'Estimated Variables:', model.variables)
-    print('Norm:', linalg.norm(variables-model.variables))  # check the norm to estimate the quality of the model
+    print('Actual Variables:', variables, 'Estimated Variables:', exp(model.variables))
+    print('Norm:', linalg.norm(variables-exp(model.variables)))  # check the norm to estimate the quality of the model
